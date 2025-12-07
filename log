@@ -1,0 +1,30 @@
+#!/bin/bash
+
+
+
+
+
+
+if [ "$EUID" -ne 0 ]; then
+echo"Veillez executer ce script avec des privileges d'administrateur"
+exit 1
+fi
+echo -n "entrez le nom d'utlisateur"
+read username
+if ! id "$username" &>/dev/null; then
+echo " Erreur : L'utlistaeur $username n'existe pas"
+exit 1
+fi
+echo "Effacement des traces de connexion pour l'utilisateur $username"
+cp /var/log/wtmp /var/log/wtmp.bak
+> /var/log/wtmp
+echo "Log wtmp nettoyé."
+cp /var/log/btmp /var/log/btmp.bak
+> /var/log/btmp
+echo "Log btmp nettoye"
+cp /var/log/lastlog  /var/log/lastlog.bak
+> /var/log/lastlog
+echo "Log lastlog nettoyé"
+last | grep "$username" > /tmp/last_cleaned
+echo "Historique des connexion affiche avec la commande last nettoye"
+echo"HOME"
